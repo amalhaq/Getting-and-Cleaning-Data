@@ -23,7 +23,7 @@ Now we can begin with the steps of the assignment.
 
 **1.  Merges the training and the test sets to create one data set.**
 For this, merge the train and test files, by rows.  So append **'xtest'** to **'xtrain'**
-using *rbind* 
+using *rbind()* 
 
 And then give names to the columns, using the values in column 2 from the data frame in 
 the "features.txt" file.
@@ -31,23 +31,23 @@ the "features.txt" file.
 Merge the **'ytrain' 'ytest'** as well as  **'subtrain' 'subtest'** files in the same way
 and give the name "activity" to the column in the merged y files, and "subject" to the 
 column in the merged subject files.
-Merge the three datasets into one large dataset using *cbind*.
+Merge the three datasets into one large dataset using *cbind()*.
 
 
 **2. Extracts only the measurements on the mean and standard deviation for 
 each measurement.**
 Use a basic command that we use on data frames to select specific rows and columns 
 *data.frame[rows, columns]*.  
-However, for the columns argument, I use the *grep* function,and a variety of meta 
+However, for the 'columns' argument, use the *grep()* function,and a variety of meta 
 characters to extract all columns that match the pattern **mean()** and **std()** in the
 column header.  Also extract  **activity** and **subject** columns.
 
 
 **3. Uses descriptive activity names to name the activities in the data set** 
 The 'activities' correspond to the values in the 'y' files.  We have already added this 
-column and named it "activity" above.  But we need to make them "descriptive, right now 
+column and named it "activity" above.  But we need to make them "descriptive", right now 
 they are number values between 1 and 6.  
-Use the second column of the data frame in "activity_labels.txt" * (line 37).  Then factor
+Use the second column of the data frame in "activity_labels.txt" *.  Then factor
 "activity" column, the last column in data frame, which currently has the class = integer.
 
 
