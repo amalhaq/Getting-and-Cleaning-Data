@@ -1,0 +1,104 @@
+---
+title: "Markdown for run_analysis.R"
+output: html_document
+---
+
+
+
+
+In the code below, lines 11-14, we first create a folder in the working directory called **projectdata**, and then download and unzip the files associated with the project using the provided URL.
+```{r}
+if(!file.exists("./projectdata")){dir.create("./projectdata")}
+fileURL<- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
+download.file(fileURL,destfile="./projectdata/Data.zip",method="curl")
+unzip(zipfile="./projectdata/Data.zip",exdir="./projectdata")
+```
+
+Now, we begin reading the various tables in.  Below I am reading the tables on the files of the 'test' dataset from the "test" folder.  I am giving them handles like 'ytest', 'xtest', 'subtest' to keep things simple, so I can backtrack easily and refer to my raw data in the "projectfolder", if I need to down the road:
+```{r}
+ytest<- read.table("projectdata/UCI HAR Dataset/test/y_test.txt", header=FALSE)
+xtest<- read.table("projectdata/UCI HAR Dataset/test/X_test.txt", header=FALSE)
+subtest<- read.table("projectdata/UCI HAR Dataset/test/subject_test.txt", header = FALSE)
+
+```
+
+Here, I do the same with the files in the "train" folder:
+```{r}
+ytrain<- read.table("projectdata/UCI HAR Dataset/train/y_train.txt", header=FALSE)
+xtrain<- read.table("projectdata/UCI HAR Dataset/train/X_train.txt", header=FALSE)
+subtrain<- read.table("projectdata/UCI HAR Dataset/train/subject_train.txt", header = FALSE)
+```
+
+And finally, I also read in the files that I am going to use as variable names for the columns of my data frame, and as activity labels for the rows in my activity column:
+```{r}
+columnnames<- read.table("projectdata/UCI HAR Dataset/features.txt", header=FALSE)
+activitynames<- read.table("projectdata/UCI HAR Dataset/activity_labels.txt", header=FALSE)
+```
+
+Now, I am ready as I have read in all the files and tables I need into my R console.  I can finally begin with the steps of my assignment.
+
+
+**1.  Merges the training and the test sets to create one data set.**
+For this, I merge the train and test files, by rows.  So I append **'xtest'** (line20) below **'xtrain'** (line 28).  
+```{r}
+mergeX<- rbind(xtrain, xtest)
+```
+
+And then I give names to the columns, using the values in column 2 from the table called "columnnames"  (line 34). *This step also partially fulfills step 4 of our assignment, which requires descriptive variable names.*
+```{r}
+colnames(mergeX)<- columnnames[,2] 
+```
+
+Do the same thing with the **'ytrain' 'ytest'** as well as  **'subtrain' 'subtest'** files.  Both the 'y' and 'sub' data frames are one column data frames. So I just give the column names using a character vector of length 1.
+```{r}
+mergey<- rbind(ytrain, ytest)
+colnames(mergey)<- c("activity")
+mergesub<- rbind(subtrain, subtest)
+colnames(mergesub)<- c("subject")
+```
+
+If you check the three dataframes, **mergeX mergey mergesub** using the `str()` command, you will see that they all have 10299 rows.  We merge the three data frames into one, and we append them by columns:
+```{r}
+mergeall<- cbind(mergeX, mergesub, mergey)
+```
+
+
+**2. Extracts only the measurements on the mean and standard deviation for each measurement.**
+For this, I use a very basic command that we use on data frames to select specific rows and columns --  `data.frame[rows, columns]`.  However, for the columns argument, I use the `grep()` function, and a variety of meta characters to make sure I extract all column names that have match the pattern **mean()** and **std()**.  I also make sure to extract the **activity** and **subject** columns because these provide information on the activities to which these measurements correspond, and the volunteers that participated in the study from whom these measurements were taken.  
+Since I am essentially subsetting my merged dataset, I am calling it **subsetmerge**:
+```{r}
+subsetmerge<- mergeall[, grep("mean\\(\\)|std\\(\\)|activity|subject", colnames(mergeall))]
+```
+
+
+**3. Uses descriptive activity names to name the activities in the data set** 
+The 'activities' actually correspond to the values in the 'y' files.  I have already added this column and named it "activity" above (line 55).  But I need to make them "descriptive, right now they are number values between 1 and 6.  So I am going to use the second column of the data frame **activitynames** (line 35).  I simply factor my "activity" column, the last column in data frame **subsetmerge** which currently has the class = integer.
+```{r}
+subsetmerge$activity <- factor(subsetmerge$activity, 1:6, as.character(activitynames$V2))
+```
+My "activity" column is now of class = factor, and 1:6 is now replaced with, in order, *walking, walking upstairs, walking downstairs, sitting, standing, laying.*
+
+
+**4. Appropriately labels the data set with descriptive variable names.**
+This was partially taken care of from the code above (line 49). But I need to clean up the column titles of typos, any unnecessary character, and make sure that the abbreviations don't become a guessing game for someone analyzing the data.  With `gsub()` command applied to the column names of **subsetmerge** data frame, I can substitute the "descriptive" variable names for the short forms, and remove unwanted characters like "()" that are currently at the end of all my column titles.
+```{r}
+colnames(subsetmerge)<-gsub("^tBody", "timeBody", colnames(subsetmerge))
+colnames(subsetmerge)<-gsub("^tGravity", "timeGravity", colnames(subsetmerge))
+colnames(subsetmerge)<-gsub("^fBody|^fBodyBody", "frequencyBody", colnames(subsetmerge))
+colnames(subsetmerge)<-gsub("Acc", "Acceleration", colnames(subsetmerge))
+colnames(subsetmerge)<-gsub("Gyro", "Gyroscope", colnames(subsetmerge))
+colnames(subsetmerge)<-gsub("Mag", "Magnitude", colnames(subsetmerge))
+colnames(subsetmerge)<-gsub("\\(\\)", "", colnames(subsetmerge))
+```
+
+
+**5. From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.**
+Finally, I am at the last step of my assignment.  I have to make a second data frame using the variables (columns) and values (rows) in **subsetmerge**.  I can do that fairly easily if I install the *""dplyr package""* and load it using the `library()` command.
+
+I simply group **subsetmerge** by "subject" first and "activity" second, storing the grouped data in **Groupmerge** -- `Groupmerge<- group_by(subsetmerge, subject, activity)`
+I then use `summarize_each()` command on **Groupmerge**  with the *funs(mean)* as the second argument. 
+
+My resulting Data Frame should be 180 rows and 68 columns, that gives just one value that averages  measurement for each of the 6 activities for each of the 30 volunteers.
+
+DONE!  
+
