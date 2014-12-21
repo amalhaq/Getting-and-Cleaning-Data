@@ -3,7 +3,7 @@ Getting-and-Cleaning-Data
 
 ---
 
-**NOTE: THIS README files also exists in Rmarkdown html output.  It may be easier to see 
+**NOTE: THIS README files also exists in Rmarkdown .Rmd file.  It may be easier to see 
 text instructions and the associated code side by side.**
 
 In the code in the run_analysis.R file, we first create a folder in the working directory 
