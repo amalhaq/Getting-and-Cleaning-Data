@@ -11,7 +11,7 @@ their waist, while they performed six activities (WALKING, WALKING_UPSTAIRS,
 WALKING_DOWNSTAIRS, SITTING, STANDING, LAYING). 
 
 
-**RAW DATA**
+RAW DATA
 Source
 ------
 
@@ -19,7 +19,8 @@ URL: https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20
 
 FOLDER:  UCI HAR Dataset
 
-RELEVENT FILES: train/Xtrain.txt
+RELEVENT FILES: 
+				train/Xtrain.txt
 				train/ytrain.txt
 				train/subject_train.txt
 				test/Xtest.txt
@@ -44,57 +45,63 @@ Spain. Dec 2012
 Data Frames and Variables in RAW DATA
 -------------------------------------
 
-Xtrain Data Frame:  
-This Data Frame contains **561** columns which corresponds to 561 different types of
-measurements (variables) taken from the accelerometer and gyroscope. There were **7352** 
+1. Xtrain Data Frame:  
+This Data Frame contains 561 columns which corresponds to 561 different types of
+measurements (variables) taken from the accelerometer and gyroscope. There were 7352 
 observation taken from 21 out of the 30 volunteers (70% of volunteers).  These columns 
 don't have defined names.
 
-Xtest Data Frame:
-This Data Frame contains **561** columns which corresponds to 561 different types of
-measurements (variables) taken from the accelerometer and gyroscope. There were **2947** 
+2. Xtest Data Frame:
+This Data Frame contains 561 columns which corresponds to 561 different types of
+measurements (variables) taken from the accelerometer and gyroscope. There were 2947 
 observation taken from the remaining 7 volunteers who were not part of the training set 
 (30% of volunteers).  These columns don't have defined names.
 
 Variables names in the Xtest and Xtrain Data Frames:
 V1 through V561
 
-features Data Frame:
-This Data Frame has **2 columns and 561 rows.** The first column only gives a count.  The 
+
+3. features Data Frame:
+This Data Frame has 2 columns and 561 rows. The first column only gives a count.  The 
 second column has text values in each row.  These texts are actually the 561 different 
 types of measurements, and correspond to the 561 columns in X train and X test Data Frames.
 *These are still not entirely descriptive, contain typos, and abbreviate heavily.*
 
-activity_labels Data Frame:
-This Data Frame has **2 columns and 6 rows.** The second columns has text in each row.
-These texts describe the different 6 activities for which the 561 measurements were taken.
-
 Variable names in Features Data Frame: 
-V1-V2 
+V1-V2
+
+
+4. activity_labels Data Frame:
+This Data Frame has 2 columns and 6 rows. The second columns has text in each row.
+These texts describe the different 6 activities for which the 561 measurements were taken.
 
 Variable names in  activity_labels Data Frame:
 V1-V2
 
-The ytrain and ytest are 1 variable dataframes (variable names = V1).  They give the 
+
+5. The ytrain and ytest are 1 variable dataframes (variable names = V1).  They give the 
 activity applicable to each of the 7352 and 2947 observations respectively, in Xtrain and 
-Xtest.  **However, they are indexed 1-6.**
+Xtest.  
+However, they are indexed 1-6.
 
-The subject_train and subject_test files are 1 variable data frames (variable names = V1).
+
+6. The subject_train and subject_test files are 1 variable data frames (variable names = V1).
 They identify the volunteers from whom the 7352 and 2947 observations were taken on Xtrain
-and Xtest respectively. **They are indexed 1-21 in Xtrain, and 22-30 in Xtest.**    
+and Xtest respectively. 
+They are indexed 1-21 in Xtrain, and 22-30 in Xtest.    
 
 
 
 
-**TIDY DATA**
+TIDY DATA
 =============
 Source
 ------
 
 See 'Source' under RAW DATA.
 
-**Please also note the code in run_analysis.R and the code execution described in 
-README.md**
+Please also note the code in run_analysis.R and the code execution described in 
+README.md
 
 
 Approach
@@ -103,18 +110,19 @@ Approach
 To obtain one data set that included all the measurement observations, the activities for
 which they had been taken, and the volunteer to which they corresponded, we merged the 
 Xtrain and Xtest, the ytrain and ytest, and the subject_train and subject_test data
-frames by rows, giving us **10299 rows**.
+frames by rows, giving us 10299 rows.
 
 We then merge three resulting data frames into one big data frame by columns, 
-giving us **563 columns**.  We added names to the columns by using the file features.txt 
-and we named column 562 "activity", and 563 "subject".  Thus, we had a basic, compiled 
+giving us 563 columns.  We added names to the columns by using the file features.txt 
+and we named column 562 "activity", and 563 "subject".  Thus, we have a basic, compiled 
 data frame of all the necessary variables.
 
 
 Data Frames and Variables in TIDY DATA:
 ---------------------------------------
 
-**subsetmerge** -- Data Frame resulting from steps 1-4 of assignment:
+1. subsetmerge -- Data Frame resulting from steps 1-4 of assignment:
+
 We want to get a data frame that only has those measurements from the 561 variables, that
 provide either a 'mean' or a standard deviation'. We extract these columns (see README.md
 for the code and appropriate functions to use for the extraction) as well as the "subject"
@@ -202,10 +210,12 @@ Variable names in "subsetmerge" (a 10299 x 68 data frame):
 [67] "subject"                                    
 [68] "activity"   
 
-**ResultDF** -- Independent Data Frame resulting from steps 5 of assignment:
+
+2. ResultDF -- Independent Data Frame resulting from steps 5 of assignment:
+
 We want to get a second, independent data frame that gives us an average of the measure-
 ments for each of the 6 activities for each of the 30 volunteers.  The data frame 
-**subsetmerge** still has our 10299 observations, because we have multiple observations for
+subsetmerge still has our 10299 observations, because we have multiple observations for
 each activity that a subject performs.
 
 To get a data frame that gives only one measurement (eg., timeBodyAcceleration-mean-X) for
@@ -216,5 +226,5 @@ the data by the 'subject' column, and then take the mean for each grouped variab
 Thus we condense the multiple observations of an activity measurement into 1 observation.
 We should have 30volunteers x 6 activities = 180 rows, which is what "ResultDF" has.
 
-Variable names in **ResultDF** (a 180 x 68 data frame):
+Variable names in ResultDF (a 180 x 68 data frame):
 See 'Variable names in "subsetmerge"'.  
