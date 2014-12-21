@@ -57,7 +57,7 @@ need to clean up the column titles of typos, any unnecessary character,
 and eliminate abbreviations don't to avoid guesswork.  Use the *gsub()* command.
 
 
-**From the data set in step 4, creates a second, independent tidy data set with the 
+**5. From the data set in step 4, creates a second, independent tidy data set with the 
 average of each variable for each activity and each subject.**
 We have to make a second data frame using the variables (columns) and values (rows) from 
 the dataset we have thus far.
