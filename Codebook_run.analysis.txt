@@ -1,0 +1,220 @@
+CODEBOOK for run_analysis.R
+===========================
+
+Experiment Design
+-----------------
+
+The experiments were carried out by capturing 3-axial linear acceleration and 3-axial 
+angular velocity, respectively from the accelerometer and gyroscope, embedded into a 
+smartphone.  The measurement were recorded from 30 volunteers who wore the smartphone on
+their waist, while they performed six activities (WALKING, WALKING_UPSTAIRS, 
+WALKING_DOWNSTAIRS, SITTING, STANDING, LAYING). 
+
+
+**RAW DATA**
+Source
+------
+
+URL: https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip
+
+FOLDER:  UCI HAR Dataset
+
+RELEVENT FILES: train/Xtrain.txt
+				train/ytrain.txt
+				train/subject_train.txt
+				test/Xtest.txt
+				test/ytest.txt
+				test/subject_test.txt
+				UCI HAR Dataset/features.txt
+				UCI HAR Dataset/activity_labels.txt
+				
+CREDITS & CITATIONS:	
+Jorge L. Reyes-Ortiz, Davide Anguita, Alessandro Ghio, Luca Oneto. 
+Smartlab - Non Linear Complex Systems Laboratory 
+DITEN - UniversitÃ  degli Studi di Genova, Genoa I-16145, Italy. 
+activityrecognition '@' smartlab.ws 
+www.smartlab.ws 
+
+Davide Anguita, Alessandro Ghio, Luca Oneto, Xavier Parra and Jorge L. Reyes-Ortiz. Human 
+Activity Recognition on Smartphones using a Multiclass Hardware-Friendly Support Vector 
+Machine. International Workshop of Ambient Assisted Living (IWAAL 2012). Vitoria-Gasteiz,
+Spain. Dec 2012
+
+
+Data Frames and Variables in RAW DATA
+-------------------------------------
+
+Xtrain Data Frame:  
+This Data Frame contains **561** columns which corresponds to 561 different types of
+measurements (variables) taken from the accelerometer and gyroscope. There were **7352** 
+observation taken from 21 out of the 30 volunteers (70% of volunteers).  These columns 
+don't have defined names.
+
+Xtest Data Frame:
+This Data Frame contains **561** columns which corresponds to 561 different types of
+measurements (variables) taken from the accelerometer and gyroscope. There were **2947** 
+observation taken from the remaining 7 volunteers who were not part of the training set 
+(30% of volunteers).  These columns don't have defined names.
+
+Variables names in the Xtest and Xtrain Data Frames:
+V1 through V561
+
+features Data Frame:
+This Data Frame has **2 columns and 561 rows.** The first column only gives a count.  The 
+second column has text values in each row.  These texts are actually the 561 different 
+types of measurements, and correspond to the 561 columns in X train and X test Data Frames.
+*These are still not entirely descriptive, contain typos, and abbreviate heavily.*
+
+activity_labels Data Frame:
+This Data Frame has **2 columns and 6 rows.** The second columns has text in each row.
+These texts describe the different 6 activities for which the 561 measurements were taken.
+
+Variable names in Features Data Frame: 
+V1-V2 
+
+Variable names in  activity_labels Data Frame:
+V1-V2
+
+The ytrain and ytest are 1 variable dataframes (variable names = V1).  They give the 
+activity applicable to each of the 7352 and 2947 observations respectively, in Xtrain and 
+Xtest.  **However, they are indexed 1-6.**
+
+The subject_train and subject_test files are 1 variable data frames (variable names = V1).
+They identify the volunteers from whom the 7352 and 2947 observations were taken on Xtrain
+and Xtest respectively. **They are indexed 1-21 in Xtrain, and 22-30 in Xtest.**    
+
+
+
+
+**TIDY DATA**
+=============
+Source
+------
+
+See 'Source' under RAW DATA.
+
+**Please also note the code in run_analysis.R and the code execution described in 
+README.md**
+
+
+Approach
+--------
+
+To obtain one data set that included all the measurement observations, the activities for
+which they had been taken, and the volunteer to which they corresponded, we merged the 
+Xtrain and Xtest, the ytrain and ytest, and the subject_train and subject_test data
+frames by rows, giving us **10299 rows**.
+
+We then merge three resulting data frames into one big data frame by columns, 
+giving us **563 columns**.  We added names to the columns by using the file features.txt 
+and we named column 562 "activity", and 563 "subject".  Thus, we had a basic, compiled 
+data frame of all the necessary variables.
+
+
+Data Frames and Variables in TIDY DATA:
+---------------------------------------
+
+**subsetmerge** -- Data Frame resulting from steps 1-4 of assignment:
+We want to get a data frame that only has those measurements from the 561 variables, that
+provide either a 'mean' or a standard deviation'. We extract these columns (see README.md
+for the code and appropriate functions to use for the extraction) as well as the "subject"
+and "activity" columns.  We added the specific activity into "activity" column by using the
+file activity_labels and the factor() function so that labels follow the 1-6 index.
+
+Our column headers are untidy, so we make them descriptive and easy to read by using gsub.
+Redundant words were removed and the following replacements were used:
+	'mean()' was changed to 'mean'
+	'std()' was changed to 'std'
+	't' was changed to 'time'
+	'f' was changed to 'frequency'
+	'Acc' was changed to 'Acceleration'
+	'Gyro' was changed to 'Gyroscope'
+	'Mag' was changed to 'Magnitude'	
+	
+Variable names in "subsetmerge" (a 10299 x 68 data frame):
+
+ [1] "timeBodyAcceleration-mean-X"                 
+ [2] "timeBodyAcceleration-mean-Y"                
+ [3] "timeBodyAcceleration-mean-Z"                 
+ [4] "timeBodyAcceleration-std-X"                 
+ [5] "timeBodyAcceleration-std-Y"                  
+ [6] "timeBodyAcceleration-std-Z"                 
+ [7] "timeGravityAcceleration-mean-X"              
+ [8] "timeGravityAcceleration-mean-Y"             
+ [9] "timeGravityAcceleration-mean-Z"              
+[10] "timeGravityAcceleration-std-X"              
+[11] "timeGravityAcceleration-std-Y"              
+[12] "timeGravityAcceleration-std-Z"              
+[13] "timeBodyAccelerationJerk-mean-X"             
+[14] "timeBodyAccelerationJerk-mean-Y"            
+[15] "timeBodyAccelerationJerk-mean-Z"             
+[16] "timeBodyAccelerationJerk-std-X"             
+[17] "timeBodyAccelerationJerk-std-Y"              
+[18] "timeBodyAccelerationJerk-std-Z"             
+[19] "timeBodyGyroscope-mean-X"                    
+[20] "timeBodyGyroscope-mean-Y"                   
+[21] "timeBodyGyroscope-mean-Z"                   
+[22] "timeBodyGyroscope-std-X"                    
+[23] "timeBodyGyroscope-std-Y"                    
+[24] "timeBodyGyroscope-std-Z"                    
+[25] "timeBodyGyroscopeJerk-mean-X"                
+[26] "timeBodyGyroscopeJerk-mean-Y"               
+[27] "timeBodyGyroscopeJerk-mean-Z"                
+[28] "timeBodyGyroscopeJerk-std-X"                
+[29] "timeBodyGyroscopeJerk-std-Y"                 
+[30] "timeBodyGyroscopeJerk-std-Z"                
+[31] "timeBodyAccelerationMagnitude-mean"          
+[32] "timeBodyAccelerationMagnitude-std"          
+[33] "timeGravityAccelerationMagnitude-mean"       
+[34] "timeGravityAccelerationMagnitude-std"       
+[35] "timeBodyAccelerationJerkMagnitude-mean"     
+[36] "timeBodyAccelerationJerkMagnitude-std"      
+[37] "timeBodyGyroscopeMagnitude-mean"             
+[38] "timeBodyGyroscopeMagnitude-std"             
+[39] "timeBodyGyroscopeJerkMagnitude-mean"         
+[40] "timeBodyGyroscopeJerkMagnitude-std"         
+[41] "frequencyBodyAcceleration-mean-X"            
+[42] "frequencyBodyAcceleration-mean-Y"           
+[43] "frequencyBodyAcceleration-mean-Z"            
+[44] "frequencyBodyAcceleration-std-X"            
+[45] "frequencyBodyAcceleration-std-Y"            
+[46] "frequencyBodyAcceleration-std-Z"            
+[47] "frequencyBodyAccelerationJerk-mean-X"       
+[48] "frequencyBodyAccelerationJerk-mean-Y"       
+[49] "frequencyBodyAccelerationJerk-mean-Z"       
+[50] "frequencyBodyAccelerationJerk-std-X"        
+[51] "frequencyBodyAccelerationJerk-std-Y"        
+[52] "frequencyBodyAccelerationJerk-std-Z"        
+[53] "frequencyBodyGyroscope-mean-X"              
+[54] "frequencyBodyGyroscope-mean-Y"              
+[55] "frequencyBodyGyroscope-mean-Z"               
+[56] "frequencyBodyGyroscope-std-X"               
+[57] "frequencyBodyGyroscope-std-Y"                
+[58] "frequencyBodyGyroscope-std-Z"               
+[59] "frequencyBodyAccelerationMagnitude-mean"     
+[60] "frequencyBodyAccelerationMagnitude-std"     
+[61] "frequencyBodyAccelerationJerkMagnitude-mean" 
+[62] "frequencyBodyAccelerationJerkMagnitude-std" 
+[63] "frequencyBodyGyroscopeMagnitude-mean"       
+[64] "frequencyBodyGyroscopeMagnitude-std"        
+[65] "frequencyBodyGyroscopeJerkMagnitude-mean"    
+[66] "frequencyBodyGyroscopeJerkMagnitude-std"    
+[67] "subject"                                    
+[68] "activity"   
+
+**ResultDF** -- Independent Data Frame resulting from steps 5 of assignment:
+We want to get a second, independent data frame that gives us an average of the measure-
+ments for each of the 6 activities for each of the 30 volunteers.  The data frame 
+**subsetmerge** still has our 10299 observations, because we have multiple observations for
+each activity that a subject performs.
+
+To get a data frame that gives only one measurement (eg., timeBodyAcceleration-mean-X) for
+only one activity (eg., WALKING) for only one subject (eg., volunteer 1).  We have to group
+the data by the 'subject' column, and then take the mean for each grouped variable.  
+'dplyr package' works well for this purpose.
+
+Thus we condense the multiple observations of an activity measurement into 1 observation.
+We should have 30volunteers x 6 activities = 180 rows, which is what "ResultDF" has.
+
+Variable names in **ResultDF** (a 180 x 68 data frame):
+See 'Variable names in "subsetmerge"'.  
